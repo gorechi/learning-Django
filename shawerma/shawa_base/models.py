@@ -1,8 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.db.models import Model, CharField, TextField, URLField, DateTimeField, ForeignKey, SmallIntegerField, BooleanField, ManyToManyField
+from django.db.models import Model, CharField, TextField, URLField, DateTimeField, ForeignKey, SmallIntegerField, BooleanField, ManyToManyField, DecimalField
 
-# Create your models here.
 class District(Model):
     name = CharField(max_length=200)
     description = TextField(null=True, blank=True)
@@ -135,23 +134,33 @@ class Shawa (Model):
         (4, 'Маленькая'),
     )
     
+    place = ForeignKey(
+        Place,
+        on_delete=models.CASCADE, 
+        related_name='shawas', 
+        related_query_name='shawa',
+        verbose_name='Место'
+        )
     name = CharField(max_length=200, verbose_name='Название')
+    price = DecimalField(
+        max_digits=8, 
+        decimal_places=2, 
+        verbose_name='Цена, ₽', 
+        blank=True, 
+        null=True,
+        )
     description = TextField(blank=True, null=True, verbose_name='Описание')
     shawa_type = SmallIntegerField(choices=SHAWA_TYPES, verbose_name='Тип')
     meat = SmallIntegerField(choices=SHAWA_MEAT, verbose_name='Мясо')
     size = SmallIntegerField(choices=SHAWA_SIZES, verbose_name='Размер')
     creation_date = DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
-    place = ForeignKey(
-        Place,
-        on_delete=models.CASCADE, 
-        related_name='shawas', 
-        related_query_name='shawa'
-        )
     spicy = BooleanField(default=False, verbose_name='Острая')
     ingredients = ManyToManyField(
         Ingredient,
         related_name='shawas', 
-        related_query_name='shawa'
+        related_query_name='shawa',
+        verbose_name='Что внутри',
+        blank=True
         )
     
     def save(self, *args, **kwargs):
@@ -160,7 +169,7 @@ class Shawa (Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return self.name
+        return self.full_name()
     
     def full_name(self):
         shawa_type = self.get_shawa_type_display().lower()

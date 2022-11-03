@@ -1,7 +1,10 @@
 from models import District, Location, Place, PlaceRate
 
-d = District()
-d.name = 'Дзержинский район'
-d.description = 'Северный жилой район, также известный как Брагино.'
+from datetime import datetime
+from django.utils import timezone
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from serializers import PlaceSerializer
 
-d.save()
+place = Place.objects.first()
+print(place)
