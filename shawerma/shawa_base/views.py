@@ -9,7 +9,7 @@ from .serializers import PlaceSerializer
 
 
 class JSONResponse(HttpResponse):
-    def __init__(self, data, **kwargs) -> None:
+    def __init__(self, data:dict={}, **kwargs) -> None:
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
         super().__init__(content, **kwargs)
@@ -38,4 +38,18 @@ def place_detail(request, pk):
     except Place.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     
+    if request.method == 'GET':
+        serialized_place = PlaceSerializer(place)
+        return HttpResponse (serialized_place.data)
     
+    elif request.method == 'PUT':
+        place_data = JSONParser().parse(request)
+        serialized_place = PlaceSerializer(place, data=place_data)
+        if serialized_place.is_valid():
+            serialized_place.save()
+            return JSONResponse(serialized_place.data)
+        return JSONResponse(serialized_place.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        place.delete()
+        return JSONResponse(status=status.HTTP_204_NO_CONTENT)
