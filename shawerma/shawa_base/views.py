@@ -40,11 +40,19 @@ def place_detail(request, pk):
     
     if request.method == 'GET':
         serialized_place = PlaceSerializer(place)
-        return HttpResponse (serialized_place.data)
+        return JSONResponse (serialized_place.data)
     
     elif request.method == 'PUT':
         place_data = JSONParser().parse(request)
         serialized_place = PlaceSerializer(place, data=place_data)
+        if serialized_place.is_valid():
+            serialized_place.save()
+            return JSONResponse(serialized_place.data)
+        return JSONResponse(serialized_place.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'PATCH':
+        place_data = JSONParser().parse(request)
+        serialized_place = PlaceSerializer(place, data=place_data, partial=True)
         if serialized_place.is_valid():
             serialized_place.save()
             return JSONResponse(serialized_place.data)
