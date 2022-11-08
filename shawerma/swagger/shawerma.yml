@@ -1,0 +1,153 @@
+openapi: '3.0.2'
+info:
+  title: Shawerma API
+  version: '1.0'
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /places:
+    get:
+      summary: Метод получения списка всех шаурмичных
+      parameters:
+        - name: districtId
+          in: query
+          description: Идентификатор локации
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlacesList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  responses:
+    BadRequest:
+      description: Неверное значение параметра или отсутствует обязательный параметр
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Отсутствует токен авторизации
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Доступ запрещен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Данные не найдены
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Системная ошибка
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Meta:
+      type: object
+      description: Метаинформация об ответе
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: 'ERROR'
+          enum:
+            - 'OK'
+            - 'ERROR'
+        message:
+          description: Сообщение
+          type: string
+          example: 'Service not available'
+        description:
+          description: Локализованное сообщение
+          type: string
+          example: 'Сервис временно недоступен'
+    Error:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+    PlacesList:
+      type: array
+      description: Список шаурмичных
+      items:
+        $ref: '#/components/schemas/Place'
+    Place:
+      type: object
+      description: Шаурмичная
+      required:
+        - name
+      properties:
+        name:
+          description: Название
+          type: string
+          example: 'Шаурмичная на Очках'
+        description:
+          description: Описание
+          type: string
+          example: 'Отличная шаурмичная'
+        url:
+          description: Адрес сайта
+          type: string
+          example: 'http://shawa.ru'
+        creation_date:
+          description: Дата добавления
+          type: string
+          example: '2017-07-25 21:15:15+03:00'
+        addtess:
+          description: Адрес
+          type: string
+          example: 'Москва, Тверская, 2'
+        place_type:
+          description: Тип
+          type: integer
+          enum:
+            - 1 - Кафе
+            - 2 - Ларек
+            - 3 - Фудтрак
+          example: 1
+        phone:
+          description: Номер телефона
+          type: string
+          example: '+79999999999'
+        delivery:
+          description: Есть доставка
+          type: boolean
+          example: true
+        seats:
+          description: Есть столики
+          type: boolean
+          example: true
+        toilet:
+          description: Есть туалет
+          type: boolean
+          example: true
+        parking:
+          description: Есть парковка
+          type: boolean
+          example: true
+        order_by_phone:
+          description: Можно заказать по телефону
+          type: boolean
+          example: true

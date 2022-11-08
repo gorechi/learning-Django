@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework import status
@@ -15,7 +15,7 @@ class JSONResponse(HttpResponse):
         super().__init__(content, **kwargs)
 
 
-@csrf_exempt
+@api_view(['GET', 'POST'])
 def places_list(request):
     if request.method == 'GET':
         places = Place.objects.all()
@@ -31,7 +31,7 @@ def places_list(request):
         return JSONResponse(serialized_place.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 def place_detail(request, pk):
     try:
         place = Place.objects.get(pk=pk)
