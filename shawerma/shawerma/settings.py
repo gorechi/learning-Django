@@ -123,15 +123,19 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DEFAULT_PARSER_CLASSES = {
+REST_FRAMEWORK = {
+
+'DEFAULT_PARSER_CLASSES': [
     'rest_framework.parsers.JSONParser',
     'rest_framework.parsers.FormParser',
     'rest_framework.parsers.MultiPartParser'
-}
+],
 
-DEFAULT_RENDERER_CLASSES = {
+'DEFAULT_RENDERER_CLASSES': [
     'rest_framework.renderers.JSONRenderer',
     'rest_framework.renderers.BrowsableAPIRenderer'
-}
+],
 
-DEFAULT_CONTENT_NEGOTIATION_CLASS = 'rest_framework.negotiation.DefaultContentNegotiation'
+'DEFAULT_CONTENT_NEGOTIATION_CLASS': 'rest_framework.negotiation.DefaultContentNegotiation'
+
+}
